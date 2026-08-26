@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grain & Latitude</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@0,8..60,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #17151a;
+      --paper: #edeae1;
+      --safelight: #c13f2e;
+      --amber: #d6a245;
+      --sage: #74806a;
+      --line: rgba(237,234,225,0.14);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: "Source Serif 4", serif;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+    header.site {
+      position: sticky;
+      top: 0;
+      background: rgba(23,21,26,0.92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+    .site-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      gap: 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-family: "Space Grotesk", sans-serif;
+    }
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid var(--paper);
+      position: relative;
+    }
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: var(--safelight);
+    }
+    .brand small {
+      display: block;
+      font-family: monospace;
+      font-size: 10px;
+      color: var(--sage);
+      text-transform: uppercase;
+    }
+    .search-box {
+      display: flex;
+      gap: 8px;
+      border: 1px solid var(--line);
+      padding: 8px 12px;
+      min-width: 200px;
+    }
+    .search-box input {
+      background: none;
+      border: none;
+      color: var(--paper);
+      width: 100%;
+    }
+    .cart-btn {
+      border: 1px solid var(--paper);
+      padding: 8px 14px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <div class="wrap site-bar">
+      <a href="#/" class="brand">
+        <span class="brand-mark"></span>
+        <span>
+          Grain & Latitude
+          <small>Supplies for shooting on film</small>
+        </span>
+      </a>
+      <nav>
+        <a href="#/">Catalog</a>
+      </nav>
+      <div class="search-box">
+        <input id="searchInput" placeholder="Search the catalog..." aria-label="Search the catalog" />
+      </div>
+      <a href="#/cart" class="cart-btn">
+        Cart <span id="cartCount">0</span>
+      </a>
+    </div>
+  </header>
+  <main data-view="catalog" class="visible">
+    <section class="hero">
+      <div class="wrap" style="display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px;">
+        <div>
+          <p style="font-family:monospace; font-size:12px; color:var(--sage);">
+            No. 001 — Est. contact sheet
+          </p>
+          <h1 style="font-family:'Space Grotesk'; font-size:42px; line-height:1.02;">
+            Stock the <em style="color:var(--safelight); font-style:normal;">darkroom</em>,<br/>
+            not the algorithm.
+          </h1>
+          <p style="opacity:0.8; max-width:46ch;">
+            Sixteen frames of film, glass, and chemistry — 
+            sourced for people who still wind a lever between shots.
+          </p>
+          <div style="display:flex; gap:14px; margin-top:20px;">
+            <a href="#/" class="btn solid" style="background:var(--paper); color:var(--ink); padding:12px 20px;">
+              Browse the sheet
+            </a>
+            <a href="#/product/p07" style="border:1px solid var(--paper); padding:12px 20px;">
+              Featured: Meridian TLR →
+            </a>
+          </div>
+        </div>
+        <div id="loupeField" style="border:1px solid var(--line); padding:14px; background:#2b2830; position:relative;">
+          <div id="heroStrip" style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
+            <!-- filled by JS -->
+          </div>
+          <div id="loupe" style="position:absolute; width:140px; height:140px; border-radius:50%; border:2px solid var(--amber); display:none; pointer-events:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div id="chipRow" style="display:flex; gap:10px; flex-wrap:wrap; padding:28px 0 6px;">
+        <!-- chips filled by JS -->
+      </div>
+      <div style="display:flex; justify-content:space-between; font-family:monospace; font-size:12px; color:var(--sage); padding:18px 0 8px;">
+        <span id="resultCount">16 frames</span>
+        <span>Roll no. GL-0826</span>
+      </div>
+      <div id="productGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:2px; border:1px solid var(--line); margin-bottom:64px;">
+        <!-- products filled by JS -->
+      </div>
+    </div>
+  </main>
+
+  <main data-view="detail" style="display:none; padding:40px 0 80px;">
+    <div class="wrap">
+      <p style="font-family:monospace; font-size:12px; color:var(--sage);">
+        <a href="#/">Catalog</a> / <span id="crumbCat"></span> / <span id="crumbName"></span>
+      </p>
+      <div style="display:grid; grid-template-columns:0.9fr 1.1fr; gap:56px; margin-top:24px;">
+        <div>
+          <div id="bigFrame" style="aspect-ratio:4/5; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; background:#2b2830;">
+            <div id="bigFrameArt"></div>
+          </div>
+        </div>
+        <div>
+          <p id="detailCat" style="font-family:monospace; color:var(--safelight); text-transform:uppercase; font-size:12px;"></p>
+          <h1 id="detailName" style="font-family:'Space Grotesk'; font-size:32px; margin:0 0 6px;"></h1>
+          <span id="detailPrice" style="font-family:monospace; font-size:22px; color:var(--amber);"></span>
+          <p id="detailDesc" style="line-height:1.7; opacity:0.88; margin:18px 0;"></p>
+          <table id="detailSpecs" style="width:100%; font-family:monospace; font-size:12px; margin:22px 0;"></table>
+          <div id="detailNotes" style="border:1px solid var(--line); padding:16px; font-family:monospace; font-size:12px; color:var(--sage); margin-bottom:26px;"></div>
+          <div style="display:flex; gap:16px;">
+            <div style="display:flex; border:1px solid var(--paper);">
+              <button id="qtyMinus" style="width:36px; height:38px; background:none; color:var(--paper); border:none; cursor:pointer;">−</button>
+              <span id="qtyVal" style="width:34px; text-align:center; line-height:38px; font-family:monospace;">1</span>
+              <button id="qtyPlus" style="width:36px; height:38px; background:none; color:var(--paper); border:none; cursor:pointer;">+</button>
+            </div>
+            <button id="addToCartBtn" style="background:var(--paper); color:var(--ink); padding:12px 20px; font-family:monospace; cursor:pointer; border:none;">Add to cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <main data-view="cart" style="display:none; padding:40px 0 100px;">
+    <div class="wrap">
+      <h1 style="font-family:'Space Grotesk';">Your cart</h1>
+      <div id="cartList"></div>
+      <div id="cartSummary" style="display:none; margin-top:28px; border-top:1px solid var(--paper); padding-top:20px; text-align:right;">
+        <div>Subtotal <b id="cartTotal" style="color:var(--amber);">$0.00</b></div>
+        <button id="checkoutBtn" style="margin-top:14px; background:var(--paper); color:var(--ink); padding:12px 20px; cursor:pointer; border:none;">Log order to lab queue</button>
+      </div>
+    </div>
+  </main>
+
+  <footer style="border-top:1px solid var(--line); padding:36px 0; font-family:monospace; font-size:11px; color:var(--sage);">
+    <div class="wrap" style="display:flex; justify-content:space-between;">
+      <span>© 2026 Grain & Latitude</span>
+      <span>Client-side routed · zero images</span>
+    </div>
+  </footer>
+
+  <div id="toast" style="position:fixed; bottom:24px; left:50%; transform:translate(-50%,20px); background:var(--paper); color:var(--ink); padding:12px 20px; opacity:0; transition:0.25s; font-family:monospace; pointer-events:none;"> </div>
+  <script>
+    const ICONS = {
+      "Film Stock": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="20" height="18" rx="2"/><circle cx="8" cy="9" r="2"/><circle cx="16" cy="9" r="2"/><path d="M2 15h20"/></svg>',
+      "Cameras": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+      "Chemistry": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 2v6.5L4.5 19a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 8.5V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>',
+      "Paper": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="1"/><circle cx="9" cy="10" r="2"/><path d="M4 17l4-4 3 3 5-6 4 5"/></svg>',
+      "Accessories": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></svg>'
+    };
+
+    const Store = (() => {
+      const products = [
+        { id:"p01", name:"Latitude 400 Color", cat:"Film Stock", format:"35mm · 36exp", iso:"ISO 400", price:14, stock:"in", desc:"A color negative stock built for wide exposure latitude.", note:"Rate at 320 in flat light." },
+        { id:"p02", name:"Latitude 400 Color 120", cat:"Film Stock", format:"120 · 15exp", iso:"ISO 400", price:16, stock:"in", desc:"Same emulsion as 35mm 400, spooled for medium format.", note:"Load in shade." },
+        { id:"p03", name:"Halide Mono 5", cat:"Film Stock", format:"35mm · 36exp", iso:"ISO 125", price:9, stock:"in", desc:"Classic fine-grain black and white stock.", note:"Develops well at box speed." },
+        { id:"p04", name:"Amber Cine 800T", cat:"Film Stock", format:"35mm · 36exp", iso:"ISO 800", price:17, stock:"low", desc:"Tungsten-balanced motion picture stock.", note:"Shoot without filter for halo." },
+        { id:"p05", name:"Latitude Slide 100", cat:"Film Stock", format:"35mm · 36exp", iso:"ISO 100", price:19, stock:"in", desc:"E-6 color reversal film.", note:"Meter for highlights." },
+        { id:"p06", name:"Halide Mono 3200", cat:"Film Stock", format:"35mm · 36exp", iso:"ISO 3200", price:13, stock:"in", desc:"Push-friendly high-speed B&W.", note:"Rates up to 6400." },
+        { id:"p07", name:"Meridian TLR", cat:"Cameras", format:"120 format", iso:"Waist-level finder", price:340, stock:"low", desc:"Fully mechanical twin-lens reflex.", note:"Fresh light seals installed." },
+        { id:"p08", name:"Compact 35 EL", cat:"Cameras", format:"35mm", iso:"Aperture priority", price:180, stock:"in", desc:"Pocketable fixed-lens compact.", note:"Uses SR44 batteries." },
+        { id:"p09", name:"Fielder Rangefinder", cat:"Cameras", format:"35mm", iso:"Manual focus", price:520, stock:"in", desc:"Fully manual rangefinder body.", note:"Compatible with manual lenses." },
+        { id:"p10", name:"Basic Developer Kit", cat:"Chemistry", format:"1L kit", iso:"C-41", price:28, stock:"in", desc:"Three-step color developing kit.", note:"Processes 12-16 rolls." },
+        { id:"p11", name:"Mono Dev Concentrate", cat:"Chemistry", format:"500ml", iso:"B&W", price:15, stock:"in", desc:"Liquid concentrate B&W developer.", note:"Store diluted max 1 session." },
+        { id:"p12", name:"Fixer & Stop Bath Set", cat:"Chemistry", format:"2 × 500ml", iso:"Universal", price:12, stock:"in", desc:"Rapid fixer and indicator stop bath.", note:"Rinse with hypo-clear." },
+        { id:"p13", name:"Resin Coat Paper 8x10", cat:"Paper", format:"25 sheets", iso:"Grade 2", price:24, stock:"in", desc:"Resin-coated printing paper.", note:"Safe under amber safelight." },
+        { id:"p14", name:"Fiber Paper 8x10", cat:"Paper", format:"25 sheets", iso:"Variable contrast", price:34, stock:"low", desc:"Traditional fiber-base paper.", note:"Wash 45-60 minutes." },
+        { id:"p15", name:"Steel Reel & Tank", cat:"Accessories", format:"2-reel tank", iso:"—", price:32, stock:"in", desc:"Stainless steel developing tank.", note:"Dry fully after wash." },
+        { id:"p16", name:"Changing Bag", cat:"Accessories", format:"Double trap", iso:"—", price:19, stock:"in", desc:"Light-tight bag for loading reels.", note:"Practice with sacrificial roll." }
+      ];
+      const byId = (id) => products.find(p => p.id === id);
+      return { products, byId };
+    })();
+
+    const Cart = (() => {
+      let items = {};
+      const add = (id, qty=1) => {
+        items[id] = (items[id] || 0) + qty;
+        save();
+      };
+      const setQty = (id, qty) => {
+        if (qty <= 0) delete items[id];
+        else items[id] = qty;
+        save();
+      };
+      const remove = (id) => {
+        delete items[id];
+        save();
+      };
+      const clear = () => {
+        items = {};
+        save();
+      };
+      const count = () => Object.values(items).reduce((a,b)=>a+b,0);
+      const total = () => Object.entries(items).reduce((s,[id,qty])=>{
+        const p = Store.byId(id);
+        return s + (p ? p.price * qty : 0);
+      },0);
+      const list = () => Object.entries(items).map(([id,qty])=>{
+        const p = Store.byId(id);
+        return p ? {...p, qty} : null;
+      }).filter(Boolean);
+      const listeners = [];
+      const onChange = (fn) => listeners.push(fn);
+      function save() { listeners.forEach(fn=>fn()); }
+      return { add, setQty, remove, clear, count, total, list, onChange };
+    })();
+
+    function money(n) {
+      return "$" + n.toFixed(2);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.style.opacity = "1";
+      t.style.transform = "translate(-50%,0)";
+      setTimeout(() => {
+        t.style.opacity = "0";
+        t.style.transform = "translate(-50%,20px)";
+      }, 1800);
+    }
+    let activeCat = "All";
+    let searchTerm = "";
+    let currentQty = 1;
+    let currentRoute = { name: "catalog" };
+
+    function renderChips() {
+      const cats = ["All", ...new Set(Store.products.map(p=>p.cat))];
+      const row = document.getElementById("chipRow");
+      row.innerHTML = cats.map(c => 
+        `<button class="chip ${c===activeCat?"active":""}" 
+          data-cat="${c}"
+          style="padding:8px 14px; border-radius:20px; border:1px solid var(--line); background:${c===activeCat?'var(--safelight)':'none'}; color:var(--paper); font-family:monospace; cursor:pointer;">
+          ${c}
+        </button>`
+      ).join("");
+      row.querySelectorAll(".chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeCat = btn.dataset.cat;
+          renderChips();
+          renderGrid();
+        });
+      });
+    }
+
+    function filteredProducts() {
+      return Store.products.filter(p => {
+        const matchCat = activeCat==="All" || p.cat===activeCat;
+        const matchSearch = !searchTerm || (p.name+p.cat+p.desc).toLowerCase().includes(searchTerm.toLowerCase());
+        return matchCat && matchSearch;
+      });
+    }
+
+    function renderGrid() {
+      const list = filteredProducts();
+      document.getElementById("resultCount").textContent = `${list.length} frames`;
+      const grid = document.getElementById("productGrid");
+      if (!list.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-family:monospace; color:var(--sage);">No frames match</div>`;
+        return;
+      }
+      grid.innerHTML = list.map((p,i) => `
+        <article style="background:var(--ink); padding:16px 14px; min-height:280px; display:flex; flex-direction:column; position:relative;">
+          <a href="#/product/${p.id}" style="position:absolute; inset:0;"></a>
+          <div style="font-family:monospace; font-size:11px; color:var(--sage);">No. ${p.id.slice(1)}</div>
+          <div style="flex:1; margin:10px 0; display:flex; align-items:center; justify-content:center; background:#1e1c22; border-radius:2px;">
+            <div style="width:40%; opacity:0.9;">${ICONS[p.cat]}</div>
+          </div>
+          <h3 style="font-family:'Space Grotesk'; font-size:15px; margin:0 0 4px;">${p.name}</h3>
+          <div style="font-family:monospace; font-size:11px; color:var(--sage); text-transform:uppercase;">${p.cat}</div>
+          <div style="display:flex; justify-content:space-between; margin-top:auto; padding-top:10px;">
+            <span style="font-family:monospace; color:var(--amber);">${money(p.price)}</span>
+            <span style="font-family:monospace; font-size:10px; color:var(--sage);">${p.stock==="low"?"Low stock":"In stock"}</span>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderHeroStrip() {
+      const strip = document.getElementById("heroStrip");
+      const sample = Store.products.slice(0,8);
+      strip.innerHTML = sample.map(p => 
+        `<div style="aspect-ratio:1/1; background:#1e1c22; display:flex; align-items:center; justify-content:center; border-radius:2px;">
+          <div style="width:40%;">${ICONS[p.cat]}</div>
+        </div>`
+      ).join("");
+    }
+
+    function renderDetail(id) {
+      const p = Store.byId(id);
+      if (!p) {
+        location.hash = "#/404";
+        return;
+      }
+      currentQty = 1;
+      document.getElementById("crumbCat").textContent = p.cat;
+      document.getElementById("crumbName").textContent = p.name;
+      document.getElementById("detailCat").textContent = p.cat + " · Frame No. " + p.id.slice(1);
+      document.getElementById("detailName").textContent = p.name;
+      document.getElementById("detailPrice").textContent = money(p.price);
+      document.getElementById("detailDesc").textContent = p.desc;
+      document.getElementById("bigFrameArt").innerHTML = `<div style="width:140px;">${ICONS[p.cat]}</div>`;
+      document.getElementById("detailSpecs").innerHTML = `
+        <tr><td style="color:var(--sage); padding:9px 0; width:40%;">Format</td><td style="padding:9px 0;">${p.format}</td></tr>
+        <tr><td style="color:var(--sage); padding:9px 0;">Rating</td><td style="padding:9px 0;">${p.iso}</td></tr>
+        <tr><td style="color:var(--sage); padding:9px 0;">Category</td><td style="padding:9px 0;">${p.cat}</td></tr>
+      `;
+      document.getElementById("detailNotes").innerHTML = `<b style="color:var(--amber); display:block; margin-bottom:6px;">Notes</b>${p.note}`;
+      document.getElementById("qtyVal").textContent = currentQty;
+    }
+
+    function renderCart() {
+      const items = Cart.list();
+      const listEl = document.getElementById("cartList");
+      const summary = document.getElementById("cartSummary");
+      if (!items.length) {
+        listEl.innerHTML = `<p style="font-family:monospace; color:var(--sage);">Your cart is empty. <a href="#/" style="text-decoration:underline;">Browse →</a></p>`;
+        summary.style.display = "none";
+        return;
+      }
+      summary.style.display = "block";
+      listEl.innerHTML = items.map(p => `
+        <div style="display:grid; grid-template-columns:70px 1fr auto auto auto; gap:18px; align-items:center; padding:16px 0; border-top:1px solid var(--line); font-family:monospace; font-size:13px;">
+          <div style="width:56px; height:56px; background:#2b2830; display:flex; align-items:center; justify-content:center;">${ICONS[p.cat]}</div>
+          <div><div style="font-family:'Space Grotesk'; font-size:14px;">${p.name}</div><div style="color:var(--sage); font-size:11px;">${p.cat}</div></div>
+          <div><button data-minus="${p.id}">−</button> ${p.qty} <button data-plus="${p.id}">+</button></div>
+          <div>${money(p.price*p.qty)}</div>
+          <button data-remove="${p.id}" style="text-decoration:underline; background:none; border:none; color:var(--sage);">Remove</button>
+        </div>
+      `).join("");
+      document.getElementById("cartTotal").textContent = money(Cart.total());
+      listEl.querySelectorAll("[data-minus]").forEach(b => b.onclick = () => {
+        const item = Cart.list().find(x=>x.id===b.dataset.minus);
+        if (item) Cart.setQty(b.dataset.minus, item.qty - 1);
+      });
+      listEl.querySelectorAll("[data-plus]").forEach(b => b.onclick = () => {
+        const item = Cart.list().find(x=>x.id===b.dataset.plus);
+        if (item) Cart.setQty(b.dataset.plus, item.qty + 1);
+      });
+      listEl.querySelectorAll("[data-remove]").forEach(b => b.onclick = () => { Cart.remove(b.dataset.remove); showToast("Removed"); });
+    }
+    // Quantity buttons
+    document.getElementById("qtyMinus").onclick = () => {
+      currentQty = Math.max(1, currentQty-1);
+      document.getElementById("qtyVal").textContent = currentQty;
+    };
+    document.getElementById("qtyPlus").onclick = () => {
+      currentQty++;
+      document.getElementById("qtyVal").textContent = currentQty;
+    };
+    document.getElementById("addToCartBtn").onclick = () => {
+      const id = location.hash.split("/")[2];
+      const product = Store.byId(id);
+      if (!product) return;
+      Cart.add(id, currentQty);
+      showToast(`Added ${currentQty} × ${product.name}`);
+    };
+
+    // Cart
+    Cart.onChange(() => {
+      document.getElementById("cartCount").textContent = Cart.count();
+      if (currentRoute.name === "cart") renderCart();
+    });
+
+    // Router
+    const Router = {
+      parse() {
+        const raw = location.hash.replace(/^#/,"") || "/";
+        const [path, qs] = raw.split("?");
+        const params = new URLSearchParams(qs||"");
+        if (path==="/" || path==="") return { name:"catalog", params };
+        if (path.startsWith("/product/")) return { name:"detail", id:path.split("/")[2], params };
+        if (path==="/cart") return { name:"cart", params };
+        return { name:"notfound", params };
+      },
+      render() {
+        const route = Router.parse();
+        currentRoute = route;
+        document.querySelectorAll("[data-view]").forEach(el => el.style.display="none");
+        if (route.name==="catalog") {
+          document.querySelector('[data-view="catalog"]').style.display="block";
+          const cat = route.params.get("cat");
+          activeCat = cat || "All";
+          const q = route.params.get("q");
+          searchTerm = (q||"").toLowerCase();
+          document.getElementById("searchInput").value = q||"";
+          renderChips();
+          renderGrid();
+        } else if (route.name==="detail") {
+          document.querySelector('[data-view="detail"]').style.display="block";
+          renderDetail(route.id);
+        } else if (route.name==="cart") {
+          document.querySelector('[data-view="cart"]').style.display="block";
+          renderCart();
+        }
+        window.scrollTo(0,0);
+      }
+    };
+
+    window.addEventListener("hashchange", Router.render);
+
+    document.getElementById("checkoutBtn").addEventListener("click", () => {
+      showToast("Order logged — thanks for shooting on film.");
+      Cart.clear();
+      setTimeout(()=> location.hash="#/", 900);
+    });
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      const val = e.target.value;
+      searchTerm = val.toLowerCase();
+      renderGrid();
+    });
+
+    // Loupe hover interaction
+    const loupeField = document.getElementById("loupeField");
+    const loupe = document.getElementById("loupe");
+    if (loupeField && loupe) {
+      loupeField.addEventListener("mouseenter", () => loupe.style.display = "block");
+      loupeField.addEventListener("mouseleave", () => loupe.style.display = "none");
+      loupeField.addEventListener("mousemove", (e) => {
+        const rect = loupeField.getBoundingClientRect();
+        const x = e.clientX - rect.left - 70;
+        const y = e.clientY - rect.top - 70;
+        loupe.style.left = `${x}px`;
+        loupe.style.top = `${y}px`;
+      });
+    }
+
+    // Init
+    renderHeroStrip();
+    renderChips();
+    renderGrid();
+    Router.render();
+  </script>
+</body>
+</html>
